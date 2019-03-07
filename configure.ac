@@ -1630,6 +1630,28 @@ AC_SUBST(OPENTHREAD_CUSTOM_LINKER_FILE)
 AM_CONDITIONAL([OPENTHREAD_ENABLE_CUSTOM_LINKER_FILE], [test "${with_custom_linker_file}" = "yes"])
 
 #
+# Emulated
+#
+
+AC_ARG_ENABLE(emulated-target,
+    [AS_HELP_STRING([--enable-emulated-target],[Enable Emulated Target @<:@default=no@:>@.])],
+    [
+        case "${enableval}" in
+
+        no|yes)
+            enable_emulated_target=${enableval}
+            ;;
+
+        *)
+            AC_MSG_ERROR([Invalid value ${enable_emulated_target} for --enable-emulated-target])
+            ;;
+        esac
+    ],
+    [enable_emulated_target=no])
+
+AM_CONDITIONAL([OPENTHREAD_ENABLE_EMULATED_TARGET], [test "${enable_emulated_target}" = "yes"])
+
+#
 # Support for ECDSA
 #
 

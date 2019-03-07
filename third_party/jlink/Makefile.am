@@ -56,8 +56,18 @@ libjlinkrtt_a_CPPFLAGS                                                          
 endif
 
 if OPENTHREAD_EXAMPLES_NRF52811
+
+if OPENTHREAD_ENABLE_EMULATED_TARGET
+libjlinkrtt_a_CPPFLAGS                                                                                 += \
+    -DNRF52840_XXAA                                                                                       \
+    $(NULL)
+else
 libjlinkrtt_a_CPPFLAGS                                                                                 += \
     -DNRF52811_XXAA                                                                                       \
+    $(NULL)
+endif
+
+libjlinkrtt_a_CPPFLAGS                                                                                 += \
     -DSEGGER_RTT_CONFIG_H=\"$(top_srcdir)/third_party/NordicSemiconductor/segger_rtt/SEGGER_RTT_Conf.h\"  \
     -I$(top_srcdir)/include                                                                               \
     -I$(top_srcdir)/third_party/NordicSemiconductor/dependencies                                          \

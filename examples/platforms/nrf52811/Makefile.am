@@ -37,9 +37,18 @@ lib_LIBRARIES                                                                   
 override CFLAGS                                      := $(filter-out -pedantic-errors,$(CFLAGS))
 override CXXFLAGS                                    := $(filter-out -pedantic-errors,$(CXXFLAGS))
 
+if OPENTHREAD_ENABLE_EMULATED_TARGET
 COMMONCPPFLAGS                                                                                             = \
-    -DCONFIG_GPIO_AS_PINRESET                                                                                \
+    -DNRF52840_XXAA                                                                                          \
+    $(NULL)
+else
+COMMONCPPFLAGS                                                                                             = \
     -DNRF52811_XXAA                                                                                          \
+    $(NULL)
+endif
+
+COMMONCPPFLAGS                                                                                            += \
+    -DCONFIG_GPIO_AS_PINRESET                                                                                \
     -I$(top_srcdir)/include                                                                                  \
     -I$(top_srcdir)/examples/platforms                                                                       \
     -I$(top_srcdir)/src/core                                                                                 \

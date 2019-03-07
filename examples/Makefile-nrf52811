@@ -90,6 +90,10 @@ ifneq ($(CERT_LOG),1)
 COMMONCFLAGS += -DOPENTHREAD_CONFIG_LOG_OUTPUT=OPENTHREAD_CONFIG_LOG_OUTPUT_PLATFORM_DEFINED
 endif
 
+ifeq ($(EMULATED),1)
+configure_OPTIONS              += --enable-emulated-target
+endif
+
 #
 # Select transport which CLI, NCP and NCP-Radio examples will use to communicate.
 # To disable all transports use the DISABLE_TRANSPORTS switch. This will disable

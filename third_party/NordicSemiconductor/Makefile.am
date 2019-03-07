@@ -93,8 +93,17 @@ NRF52840_CPPFLAGS                                                               
     -I$(top_srcdir)/examples/platforms/nrf52840                                                                           \
     $(NULL)
 
+if OPENTHREAD_ENABLE_EMULATED_TARGET
+NRF52811_CPPFLAGS                                                                                                       = \
+    -DNRF52840_XXAA                                                                                                       \
+    $(NULL)
+else
 NRF52811_CPPFLAGS                                                                                                       = \
     -DNRF52811_XXAA                                                                                                       \
+    $(NULL)
+endif
+
+NRF52811_CPPFLAGS                                                                                                      += \
     -DNRF_802154_PROJECT_CONFIG=\"platform-config.h\"                                                                     \
     -D__HEAP_SIZE=0                                                                                                       \
     -D__STACK_SIZE=2048                                                                                                   \
