@@ -60,11 +60,11 @@ libopenthread_da15000_a_CPPFLAGS                                                
 
 PLATFORM_SOURCES                                                                        = \
     alarm.c                                                                               \
+    entropy.c                                                                             \
     flash.c                                                                               \
     logging.c                                                                             \
     misc.c                                                                                \
     radio.c                                                                               \
-    random.c                                                                              \
     system.c                                                                              \
     uart.c                                                                                \
     crypto/aes_alt.c                                                                      \

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, The OpenThread Authors.
+ *  Copyright (c) 2019, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,23 +28,42 @@
 
 /**
  * @file
- *   This file implements the OpenThread platform abstraction for random number generator.
- *
+ *   This file provides an implementation of OpenThread random number generation manager class.
  */
 
-#include "phy.h"
-#include "platform-samr21.h"
-#include <openthread/platform/radio.h>
-#include <openthread/platform/random.h>
+#include "random_manager.hpp"
 
-uint32_t otPlatRandomGet(void)
+#include <openthread/error.h>
+
+#include "debug.hpp"
+#include "entropy.hpp"
+#include "random.hpp"
+
+namespace ot {
+
+RandomManager::RandomManager(void)
 {
-    return samr21RadioRandomGet();
+    uint32_t seed;
+    otError  error;
+
+    Entropy::Init();
+
+    error = Entropy::GetUint32(&seed);
+    assert(error == OT_ERROR_NONE);
+
+    Random::NonCrypto::Seed(seed);
+
+#ifndef OPENTHREAD_RADIO
+    Random::Crypto::Init();
+#endif
 }
 
-otError otPlatRandomGetTrue(uint8_t *aOutput, uint16_t aOutputLength)
+RandomManager::~RandomManager(void)
 {
-    samr21RadioRandomGetTrue(aOutput, aOutputLength);
-
-    return OT_ERROR_NONE;
+#ifndef OPENTHREAD_RADIO
+    Random::Crypto::Deinit();
+#endif
+    Entropy::Deinit();
 }
+
+} // namespace ot

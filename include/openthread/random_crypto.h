@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2016, The OpenThread Authors.
+ *  Copyright (c) 2019, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,17 @@
 /**
  * @file
  * @brief
- *   This file includes the platform abstraction for random number generation.
+ *  This file defines the OpenThread cryptographic random number generator API.
  */
 
-#ifndef OPENTHREAD_PLATFORM_RANDOM_H_
-#define OPENTHREAD_PLATFORM_RANDOM_H_
+#ifndef OPENTHREAD_RANDOM_CRYPTO_H_
+#define OPENTHREAD_RANDOM_CRYPTO_H_
 
-#include <stdint.h>
+#include "openthread-core-config.h"
 
+#include "utils/wrap_stdint.h"
+
+#include <mbedtls/ctr_drbg.h>
 #include <openthread/error.h>
 
 #ifdef __cplusplus
@@ -44,39 +47,30 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup plat-random
+ * @addtogroup api-random
  *
  * @brief
- *   This module includes the platform abstraction for random number generation.
+ *   This module includes functions that generates cryptographic random numbers.
  *
  * @{
  *
  */
 
 /**
- * Get a 32-bit random value.
+ * This function fills a given buffer with cryptographically secure random bytes.
  *
- * This function may be implemented using a pseudo-random number generator.
- *
- * @returns A 32-bit random value.
+ * @param[out] aBuffer  A pointer to a buffer to fill with the random bytes.
+ * @param[in]  aSize    Size of buffer (number of bytes to fill).
  *
  */
-uint32_t otPlatRandomGet(void);
+otError otRandomCryptoFillBuffer(uint8_t *aBuffer, uint16_t aSize);
 
 /**
- * Get true random value sequence.
+ * This function returns initialized mbedtls_ctr_drbg_context.
  *
- * This function MUST be implemented using a true random number generator (TRNG).
- *
- * @param[out]  aOutput              A pointer to where the true random values are placed.  Must not be NULL.
- * @param[in]   aOutputLength        Size of @p aBuffer.
- *
- * @retval OT_ERROR_NONE          Successfully filled @p aBuffer with true random values.
- * @retval OT_ERROR_FAILED         Failed to fill @p aBuffer with true random values.
- * @retval OT_ERROR_INVALID_ARGS  @p aBuffer was set to NULL.
- *
+ * @returns  A pointer to initialized mbedtls_ctr_drbg_context.
  */
-otError otPlatRandomGetTrue(uint8_t *aOutput, uint16_t aOutputLength);
+mbedtls_ctr_drbg_context *otRandomCryptoMbedTlsContextGet(void);
 
 /**
  * @}
@@ -84,7 +78,7 @@ otError otPlatRandomGetTrue(uint8_t *aOutput, uint16_t aOutputLength);
  */
 
 #ifdef __cplusplus
-} // end of extern "C"
+} // extern "C"
 #endif
 
-#endif // OPENTHREAD_PLATFORM_RANDOM_H_
+#endif // OPENTHREAD_RANDOM_CRYPTO_H_

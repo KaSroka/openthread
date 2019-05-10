@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2016, The OpenThread Authors.
+ *  Copyright (c) 2019, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,13 @@
 
 /**
  * @file
- *   This file implements true random number generator.
+ *   This file implements an entropy source based on TRNG.
+ *
  */
 
-#include <string.h>
+#include <openthread/platform/entropy.h>
 
-#include <openthread/platform/random.h>
+#include <string.h>
 
 #include "platform-da15000.h"
 
@@ -67,7 +68,7 @@ void da15000RandomInit(void)
     StartGenerator();
 }
 
-uint32_t otPlatRandomGet(void)
+static uint32_t randomUint32Get(void)
 {
     uint32_t randomNumber;
     bool     randomGet = false;
@@ -102,13 +103,13 @@ uint32_t otPlatRandomGet(void)
     return randomNumber;
 }
 
-otError otPlatRandomGetTrue(uint8_t *aOutput, uint16_t aOutputLength)
+otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
 {
     uint32_t randomNumber;
 
     while (aOutputLength)
     {
-        randomNumber = otPlatRandomGet();
+        randomNumber = randomUint32Get();
 
         if (aOutputLength < 4)
         {

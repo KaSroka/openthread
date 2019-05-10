@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, The OpenThread Authors.
+ *  Copyright (c) 2019, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,12 @@
 
 /**
  * @file
- *   This file implements a random number generator.
+ *   This file implements an entropy source based on TRNG.
  *
  */
 
-#include "openthread/platform/random.h"
+#include <openthread/platform/entropy.h>
+
 #include "fsl_device_registers.h"
 #include "fsl_trng.h"
 #include <stdint.h>
@@ -60,12 +61,7 @@ exit:
     return;
 }
 
-uint32_t otPlatRandomGet(void)
-{
-    return (uint32_t)rand();
-}
-
-otError otPlatRandomGetTrue(uint8_t *aOutput, uint16_t aOutputLength)
+otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
 {
     otError status = OT_ERROR_NONE;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2016, The OpenThread Authors.
+ *  Copyright (c) 2019, The OpenThread Authors.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,51 +28,51 @@
 
 /**
  * @file
- *   This file includes definitions for using mbedTLS.
+ *   This file implements the OpenThread software random number generator API.
  */
 
-#ifndef OT_MBEDTLS_HPP_
-#define OT_MBEDTLS_HPP_
+#include "openthread/random_noncrypto.h"
 
-#include "openthread-core-config.h"
+#include "common/random.hpp"
 
-#include <openthread/instance.h>
+using namespace ot;
 
-namespace ot {
-namespace Crypto {
-
-/**
- * @addtogroup core-security
- *
- * @{
- *
- */
-
-/**
- * This class implements mbedTLS memory.
- *
- */
-class MbedTls
+uint32_t otRandomNonCryptoGetUint32(void)
 {
-public:
-    /**
-     * This constructor initializes the object.
-     *
-     */
-    MbedTls(void);
+    return Random::NonCrypto::GetUint32();
+}
 
-    /**
-     * This method converts from MbedTls error to OpenThread error.
-     */
-    static otError MapError(int rval);
-};
+uint8_t otRandomNonCryptoGetUint8(void)
+{
+    return Random::NonCrypto::GetUint8();
+}
 
-/**
- * @}
- *
- */
+uint16_t otRandomNonCryptoGetUint16(void)
+{
+    return Random::NonCrypto::GetUint16();
+}
 
-} // namespace Crypto
-} // namespace ot
+uint8_t otRandomNonCryptoGetUint8InRange(uint8_t aMin, uint8_t aMax)
+{
+    return Random::NonCrypto::GetUint8InRange(aMin, aMax);
+}
 
-#endif // OT_MBEDTLS_HPP_
+uint16_t otRandomNonCryptoGetUint16InRange(uint16_t aMin, uint16_t aMax)
+{
+    return Random::NonCrypto::GetUint16InRange(aMin, aMax);
+}
+
+uint32_t otRandomNonCryptoGetUint32InRange(uint32_t aMin, uint32_t aMax)
+{
+    return Random::NonCrypto::GetUint32InRange(aMin, aMax);
+}
+
+void otRandomNonCryptoFillBuffer(uint8_t *aBuffer, uint16_t aSize)
+{
+    Random::NonCrypto::FillBuffer(aBuffer, aSize);
+}
+
+uint32_t otRandomNonCryptoAddJitter(uint32_t aValue, uint16_t aJitter)
+{
+    return Random::NonCrypto::AddJitter(aValue, aJitter);
+}
