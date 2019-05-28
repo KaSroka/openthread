@@ -30,6 +30,8 @@
 
 #include "utils/wrap_string.h"
 
+#include <limits>
+
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
 #include "common/instance.hpp"
@@ -374,7 +376,7 @@ void Client::HandleUdpReceive(Message &aMessage, const Ip6::MessageInfo &aMessag
     // Due to NTP protocol limitation, this module stops working correctly after around year 2106, if
     // unix era is not updated. This seems to be a reasonable limitation for now. Era number cannot be
     // obtained using NTP protocol, and client of this module is responsible to set it properly.
-    unixTime = GetUnixEra() * (UINT32_MAX + 1ULL);
+    unixTime = GetUnixEra() * ((std::numeric_limits<uint32_t>::max)() + 1ULL);
 
     if (responseHeader.GetTransmitTimestampSeconds() > kTimeAt1970)
     {
@@ -382,8 +384,8 @@ void Client::HandleUdpReceive(Message &aMessage, const Ip6::MessageInfo &aMessag
     }
     else
     {
-        unixTime +=
-            static_cast<uint64_t>(responseHeader.GetTransmitTimestampSeconds()) + (UINT32_MAX + 1ULL) - kTimeAt1970;
+        unixTime += static_cast<uint64_t>(responseHeader.GetTransmitTimestampSeconds()) +
+                    ((std::numeric_limits<uint32_t>::max)() + 1ULL) - kTimeAt1970;
     }
 
     // Return the time since 1970.

@@ -32,6 +32,8 @@
 
 #include <openthread/config.h>
 
+#include <limits>
+
 #include "ncp_base.hpp"
 
 #if OPENTHREAD_ENABLE_BORDER_ROUTER
@@ -872,7 +874,8 @@ template <> otError NcpBase::HandlePropertyInsert<SPINEL_PROP_SERVER_SERVICES>(v
     VerifyOrExit((dataLen <= sizeof(cfg.mServiceData)), error = OT_ERROR_INVALID_ARGS);
     memcpy(cfg.mServiceData, data, dataLen);
 
-    OT_STATIC_ASSERT((sizeof(cfg.mServiceData) <= UINT8_MAX), "Cannot handle full range of buffer length");
+    OT_STATIC_ASSERT((sizeof(cfg.mServiceData) <= (std::numeric_limits<uint8_t>::max)()),
+                     "Cannot handle full range of buffer length");
     cfg.mServiceDataLength = static_cast<uint8_t>(dataLen);
 
     SuccessOrExit(error = mDecoder.ReadBool(stable));
@@ -882,7 +885,8 @@ template <> otError NcpBase::HandlePropertyInsert<SPINEL_PROP_SERVER_SERVICES>(v
     VerifyOrExit((dataLen <= sizeof(cfg.mServerConfig.mServerData)), error = OT_ERROR_INVALID_ARGS);
     memcpy(cfg.mServerConfig.mServerData, data, dataLen);
 
-    OT_STATIC_ASSERT((sizeof(cfg.mServerConfig.mServerData) <= UINT8_MAX), "Cannot handle full range of buffer length");
+    OT_STATIC_ASSERT((sizeof(cfg.mServerConfig.mServerData) <= (std::numeric_limits<uint8_t>::max)()),
+                     "Cannot handle full range of buffer length");
     cfg.mServerConfig.mServerDataLength = static_cast<uint8_t>(dataLen);
 
     SuccessOrExit(error = otServerAddService(mInstance, &cfg));
@@ -903,7 +907,7 @@ template <> otError NcpBase::HandlePropertyRemove<SPINEL_PROP_SERVER_SERVICES>(v
     SuccessOrExit(error = mDecoder.ReadUint32(enterpriseNumber));
     SuccessOrExit(error = mDecoder.ReadDataWithLen(serviceData, serviceDataLength));
 
-    VerifyOrExit(serviceDataLength <= UINT8_MAX, error = OT_ERROR_INVALID_ARGS);
+    VerifyOrExit(serviceDataLength <= (std::numeric_limits<uint8_t>::max)(), error = OT_ERROR_INVALID_ARGS);
 
     SuccessOrExit(error = otServerRemoveService(mInstance, enterpriseNumber, serviceData,
                                                 static_cast<uint8_t>(serviceDataLength)));

@@ -38,6 +38,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/resource.h>
@@ -180,7 +181,7 @@ RadioSpinel::RadioSpinel(void)
     , mDiagOutput(NULL)
     , mDiagOutputMaxLen(0)
 #endif
-    , mTxRadioEndUs(UINT64_MAX)
+    , mTxRadioEndUs((std::numeric_limits<uint64_t>::max)())
 {
     mVersion[0] = '\0';
 }
@@ -762,7 +763,7 @@ void RadioSpinel::Process(const fd_set &aReadFdSet, const fd_set &aWriteFdSet)
     if (mState == kStateTransmitDone)
     {
         mState        = kStateReceive;
-        mTxRadioEndUs = UINT64_MAX;
+        mTxRadioEndUs = (std::numeric_limits<uint64_t>::max)();
 
 #if OPENTHREAD_ENABLE_DIAG
         if (otPlatDiagModeGet())

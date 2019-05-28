@@ -33,6 +33,7 @@
 
 #include "cli.hpp"
 
+#include <limits>
 #include <stdio.h>
 #include <stdlib.h>
 #include "mac/channel_mask.hpp"
@@ -2995,7 +2996,8 @@ void Interpreter::HandleSntpResponse(uint64_t aTime, otError aResult)
         // Some Embedded C libraries do not support printing of 64-bit unsigned integers.
         // To simplify, unix epoch time and era number are printed separately.
         mServer->OutputFormat("SNTP response - Unix time: %ld (era: %ld)\r\n",
-                              static_cast<uint32_t>(aTime & UINT32_MAX), static_cast<uint32_t>(aTime >> 32));
+                              static_cast<uint32_t>(aTime & (std::numeric_limits<uint32_t>::max)()),
+                              static_cast<uint32_t>(aTime >> 32));
     }
     else
     {
