@@ -114,7 +114,7 @@ ThreadNetif::ThreadNetif(Instance &aInstance)
 
 void ThreadNetif::Up(void)
 {
-    VerifyOrExit(!mIsUp);
+    VerifyOrExit(!mIsUp, OT_NO_ACTION);
 
     // Enable the MAC just in case it was disabled while the Interface was down.
     Get<Mac::Mac>().SetEnabled(true);
@@ -143,7 +143,7 @@ exit:
 
 void ThreadNetif::Down(void)
 {
-    VerifyOrExit(mIsUp);
+    VerifyOrExit(mIsUp, OT_NO_ACTION);
 
 #if OPENTHREAD_ENABLE_DNS_CLIENT
     Get<Dns::Client>().Stop();

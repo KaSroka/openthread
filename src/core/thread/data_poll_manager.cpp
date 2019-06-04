@@ -207,7 +207,7 @@ void DataPollManager::HandlePollSent(otError aError)
 {
     bool shouldRecalculatePollPeriod = false;
 
-    VerifyOrExit(mEnabled);
+    VerifyOrExit(mEnabled, OT_NO_ACTION);
 
     switch (aError)
     {
@@ -280,7 +280,7 @@ void DataPollManager::HandlePollTimeout(void)
     // a data poll indicated that a frame was pending, but no frame
     // was received after timeout interval.
 
-    VerifyOrExit(mEnabled);
+    VerifyOrExit(mEnabled, OT_NO_ACTION);
 
     mPollTimeoutCounter++;
 
@@ -301,7 +301,7 @@ exit:
 
 void DataPollManager::CheckFramePending(Mac::Frame &aFrame)
 {
-    VerifyOrExit(mEnabled);
+    VerifyOrExit(mEnabled, OT_NO_ACTION);
 
     mPollTimeoutCounter = 0;
 
@@ -369,11 +369,11 @@ otError DataPollManager::StopFastPolls(void)
 {
     otError error = OT_ERROR_NONE;
 
-    VerifyOrExit(mFastPollsUsers != 0);
+    VerifyOrExit(mFastPollsUsers != 0, OT_NO_ACTION);
 
     // If `mFastPollsUsers` hits the max, let it be cleared
     // from `HandlePollSent()` (after all fast polls are sent).
-    VerifyOrExit(mFastPollsUsers < kMaxFastPollsUsers);
+    VerifyOrExit(mFastPollsUsers < kMaxFastPollsUsers, OT_NO_ACTION);
 
     mFastPollsUsers--;
 

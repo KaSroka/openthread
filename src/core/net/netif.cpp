@@ -308,7 +308,7 @@ otError Netif::GetNextExternalMulticast(uint8_t &aIterator, Address &aAddress)
     size_t                 num   = OT_ARRAY_LENGTH(mExtMulticastAddresses);
     NetifMulticastAddress *entry;
 
-    VerifyOrExit(aIterator < num);
+    VerifyOrExit(aIterator < num, OT_NO_ACTION);
 
     // Find an available entry in the `mExtMulticastAddresses` array.
     for (uint8_t i = aIterator; i < num; i++)

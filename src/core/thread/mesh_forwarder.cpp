@@ -109,7 +109,7 @@ void MeshForwarder::Stop(void)
 {
     Message *message;
 
-    VerifyOrExit(mEnabled == true);
+    VerifyOrExit(mEnabled == true, OT_NO_ACTION);
 
     mDataPollManager.StopPolling();
     mUpdateTimer.Stop();
@@ -169,7 +169,7 @@ void MeshForwarder::ScheduleTransmissionTask(Tasklet &aTasklet)
 
 void MeshForwarder::ScheduleTransmissionTask(void)
 {
-    VerifyOrExit(mSendBusy == false);
+    VerifyOrExit(mSendBusy == false, OT_NO_ACTION);
 
     mSendMessageIsARetransmission = false;
 
@@ -201,7 +201,7 @@ otError MeshForwarder::PrepareDiscoverRequest(void)
 {
     otError error = OT_ERROR_NONE;
 
-    VerifyOrExit(!mScanning);
+    VerifyOrExit(!mScanning, OT_NO_ACTION);
 
     mScanChannel  = Mac::ChannelMask::kChannelIteratorFirst;
     mRestorePanId = Get<Mac::Mac>().GetPanId();
@@ -456,7 +456,8 @@ otError MeshForwarder::SkipMeshHeader(const uint8_t *&aFrame, uint8_t &aFrameLen
     otError            error = OT_ERROR_NONE;
     Lowpan::MeshHeader meshHeader;
 
-    VerifyOrExit(aFrameLength >= 1 && reinterpret_cast<const Lowpan::MeshHeader *>(aFrame)->IsMeshHeader());
+    VerifyOrExit(aFrameLength >= 1 && reinterpret_cast<const Lowpan::MeshHeader *>(aFrame)->IsMeshHeader(),
+                 OT_NO_ACTION);
 
     SuccessOrExit(error = meshHeader.Init(aFrame, aFrameLength));
     aFrame += meshHeader.GetHeaderLength();
@@ -1008,7 +1009,7 @@ void MeshForwarder::HandleSentFrame(Mac::Frame &aFrame, otError aError)
 
     mSendBusy = false;
 
-    VerifyOrExit(mEnabled);
+    VerifyOrExit(mEnabled, OT_NO_ACTION);
 
     aFrame.GetDstAddr(macDest);
 
@@ -1051,7 +1052,7 @@ void MeshForwarder::HandleSentFrame(Mac::Frame &aFrame, otError aError)
     HandleSentFrameToChild(aFrame, aError, macDest);
 #endif
 
-    VerifyOrExit(mSendMessage != NULL);
+    VerifyOrExit(mSendMessage != NULL, OT_NO_ACTION);
 
     if (mSendMessage->GetDirectTransmission())
     {
@@ -1596,14 +1597,14 @@ otError MeshForwarder::GetFramePriority(const uint8_t *     aFrame,
     SuccessOrExit(error = DecompressIp6Header(aFrame, aFrameLength, aMacSource, aMacDest, ip6Header, headerLength,
                                               nextHeaderCompressed));
     aPriority = Ip6::Ip6::DscpToPriority(ip6Header.GetDscp());
-    VerifyOrExit(ip6Header.GetNextHeader() == Ip6::kProtoUdp);
+    VerifyOrExit(ip6Header.GetNextHeader() == Ip6::kProtoUdp, OT_NO_ACTION);
 
     aFrame += headerLength;
     aFrameLength -= headerLength;
 
     if (nextHeaderCompressed)
     {
-        VerifyOrExit(Get<Lowpan::Lowpan>().DecompressUdpHeader(udpHeader, aFrame, aFrameLength) >= 0);
+        VerifyOrExit(Get<Lowpan::Lowpan>().DecompressUdpHeader(udpHeader, aFrame, aFrameLength) >= 0, OT_NO_ACTION);
     }
     else
     {
@@ -1639,20 +1640,22 @@ otError MeshForwarder::ParseIp6UdpTcpHeader(const Message &aMessage,
     aSourcePort = 0;
     aDestPort   = 0;
 
-    VerifyOrExit(sizeof(Ip6::Header) == aMessage.Read(0, sizeof(Ip6::Header), &aIp6Header));
-    VerifyOrExit(aIp6Header.IsVersion6());
+    VerifyOrExit(sizeof(Ip6::Header) == aMessage.Read(0, sizeof(Ip6::Header), &aIp6Header), OT_NO_ACTION);
+    VerifyOrExit(aIp6Header.IsVersion6(), OT_NO_ACTION);
 
     switch (aIp6Header.GetNextHeader())
     {
     case Ip6::kProtoUdp:
-        VerifyOrExit(sizeof(Ip6::UdpHeader) == aMessage.Read(sizeof(Ip6::Header), sizeof(Ip6::UdpHeader), &header.udp));
+        VerifyOrExit(sizeof(Ip6::UdpHeader) == aMessage.Read(sizeof(Ip6::Header), sizeof(Ip6::UdpHeader), &header.udp),
+                     OT_NO_ACTION);
         aChecksum   = header.udp.GetChecksum();
         aSourcePort = header.udp.GetSourcePort();
         aDestPort   = header.udp.GetDestinationPort();
         break;
 
     case Ip6::kProtoTcp:
-        VerifyOrExit(sizeof(Ip6::TcpHeader) == aMessage.Read(sizeof(Ip6::Header), sizeof(Ip6::TcpHeader), &header.tcp));
+        VerifyOrExit(sizeof(Ip6::TcpHeader) == aMessage.Read(sizeof(Ip6::Header), sizeof(Ip6::TcpHeader), &header.tcp),
+                     OT_NO_ACTION);
         aChecksum   = header.tcp.GetChecksum();
         aSourcePort = header.tcp.GetSourcePort();
         aDestPort   = header.tcp.GetDestinationPort();
@@ -1814,7 +1817,7 @@ void MeshForwarder::LogMessage(MessageAction       aAction,
         break;
     }
 
-    VerifyOrExit(GetInstance().GetLogLevel() >= logLevel);
+    VerifyOrExit(GetInstance().GetLogLevel() >= logLevel, OT_NO_ACTION);
 
     switch (aMessage.GetType())
     {
