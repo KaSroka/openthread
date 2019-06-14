@@ -2147,6 +2147,10 @@ const char *spinel_prop_key_to_cstr(spinel_prop_key_t prop_key)
         ret = "CNTR_MLE_COUNTERS";
         break;
 
+    case SPINEL_PROP_CNTR_ALL_SPINEL_COUNTERS:
+        ret = "CNTR_ALL_SPINEL_COUNTERS";
+        break;
+
     case SPINEL_PROP_NEST_STREAM_MFG:
         ret = "NEST_STREAM_MFG";
         break;

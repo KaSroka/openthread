@@ -499,6 +499,10 @@ NcpBase::PropertyHandler NcpBase::FindGetPropertyHandler(spinel_prop_key_t aKey)
     case SPINEL_PROP_CNTR_IP_RX_FAILURE:
         handler = &NcpBase::HandlePropertyGet<SPINEL_PROP_CNTR_IP_RX_FAILURE>;
         break;
+        // Spinel counters
+    case SPINEL_PROP_CNTR_ALL_SPINEL_COUNTERS:
+        handler = &NcpBase::HandlePropertyGet<SPINEL_PROP_CNTR_ALL_SPINEL_COUNTERS>;
+        break;
 #if OPENTHREAD_CONFIG_ENABLE_TIME_SYNC
     case SPINEL_PROP_THREAD_NETWORK_TIME:
         handler = &NcpBase::HandlePropertyGet<SPINEL_PROP_THREAD_NETWORK_TIME>;

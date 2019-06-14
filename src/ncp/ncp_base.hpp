@@ -592,6 +592,15 @@ protected:
     uint32_t mRxSpinelOutOfOrderTidCounter; // Number of out of order received spinel frames (tid increase > 1).
     uint32_t mTxSpinelFrameCounter;         // Number of sent (outbound) spinel frames.
 
+    uint32_t mLogReqCnt;
+    uint32_t mLogReqFail;
+    uint32_t mEnqRespCnt;
+    uint32_t mEnqRespFail;
+    uint32_t mUpdatePropsCnt;
+    uint32_t mUpdatePropsSucc;
+    uint32_t mSendDatagramCnt;
+    uint32_t mSendDatagramFail;
+
     bool mDidInitialUpdates;
 };
 

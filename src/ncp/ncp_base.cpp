@@ -604,6 +604,8 @@ void NcpBase::Log(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aLog
     otError error  = OT_ERROR_NONE;
     uint8_t header = SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0;
 
+    mLogReqCnt++;
+
     VerifyOrExit(!mDisableStreamWrite);
     VerifyOrExit(!mChangedPropsSet.IsPropertyFiltered(SPINEL_PROP_STREAM_LOG));
 
@@ -623,6 +625,7 @@ exit:
 
     if (error == OT_ERROR_NO_BUFS)
     {
+        mLogReqFail++;
         mChangedPropsSet.AddLastStatus(SPINEL_STATUS_NOMEM);
         mUpdateChangedPropsTask.Post();
     }
@@ -659,6 +662,8 @@ otError NcpBase::EnqueueResponse(uint8_t aHeader, ResponseType aType, unsigned i
     spinel_tid_t   tid   = SPINEL_HEADER_GET_TID(aHeader);
     ResponseEntry *entry;
 
+    mEnqRespCnt++;
+
     if (tid == 0)
     {
         // No response is required for TID zero. But we may emit a
@@ -680,7 +685,7 @@ otError NcpBase::EnqueueResponse(uint8_t aHeader, ResponseType aType, unsigned i
         // dropped.
 
         mChangedPropsSet.AddLastStatus(SPINEL_STATUS_DROPPED);
-
+        mEnqRespFail++;
         ExitNow(error = OT_ERROR_NO_BUFS);
     }
 
@@ -803,6 +808,8 @@ void NcpBase::UpdateChangedProps(void)
             continue;
         }
 
+        mUpdatePropsCnt++;
+
         propKey = entry->mPropKey;
 
         if (propKey == SPINEL_PROP_LAST_STATUS)
@@ -820,6 +827,8 @@ void NcpBase::UpdateChangedProps(void)
         {
             SuccessOrExit(WritePropertyValueIsFrame(SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0, propKey));
         }
+
+        mUpdatePropsSucc++;
 
         mChangedPropsSet.RemoveEntry(index);
         VerifyOrExit(!mChangedPropsSet.IsEmpty());

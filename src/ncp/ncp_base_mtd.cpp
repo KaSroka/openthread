@@ -190,6 +190,24 @@ exit:
     return error;
 }
 
+template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_CNTR_ALL_SPINEL_COUNTERS>(void)
+{
+    otError error;
+    SuccessOrExit(error = mEncoder.OpenStruct());
+    SuccessOrExit(error = mEncoder.WriteUint32(mLogReqCnt));
+    SuccessOrExit(error = mEncoder.WriteUint32(mLogReqFail));
+    SuccessOrExit(error = mEncoder.WriteUint32(mEnqRespCnt));
+    SuccessOrExit(error = mEncoder.WriteUint32(mEnqRespFail));
+    SuccessOrExit(error = mEncoder.WriteUint32(mUpdatePropsCnt));
+    SuccessOrExit(error = mEncoder.WriteUint32(mUpdatePropsCnt - mUpdatePropsSucc));
+    SuccessOrExit(error = mEncoder.WriteUint32(mSendDatagramCnt));
+    SuccessOrExit(error = mEncoder.WriteUint32(mSendDatagramFail));
+    SuccessOrExit(error = mEncoder.CloseStruct());
+
+exit:
+    return error;
+}
+
 template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_MAC_DATA_POLL_PERIOD>(void)
 {
     return mEncoder.WriteUint32(otLinkGetPollPeriod(mInstance));
@@ -3419,12 +3437,16 @@ otError NcpBase::SendQueuedDatagramMessages(void)
         // If forming of the spinel frame fails, the message is enqueued
         // back at the front of `mMessageQueue`.
 
+        mSendDatagramCnt++;
+
         otMessageQueueDequeue(&mMessageQueue, message);
 
         error = SendDatagramMessage(message);
 
         if (error != OT_ERROR_NONE)
         {
+            mSendDatagramFail++;
+
             otMessageQueueEnqueueAtHead(&mMessageQueue, message);
         }
 
