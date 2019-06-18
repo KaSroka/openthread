@@ -600,6 +600,8 @@ protected:
     uint32_t mUpdatePropsSucc;
     uint32_t mSendDatagramCnt;
     uint32_t mSendDatagramFail;
+    uint32_t mSendLogByteCnt;               // Number of the total log bytes that NCP tried to send over spinel.
+    uint32_t mDroppedLogByteCnt;            // Number of the log bytes that were not transmitted over spinel.
 
     bool mDidInitialUpdates;
 };

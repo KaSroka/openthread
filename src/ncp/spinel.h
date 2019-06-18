@@ -3735,7 +3735,8 @@ typedef enum
      */
     SPINEL_PROP_CNTR_MLE_COUNTERS = SPINEL_PROP_CNTR__BEGIN + 402,
 
-    /// Spinel counters.
+    // TODO: fix description.
+    /// Spinel counters. 
     /** Format: `SSSSSSSSS`  (Read-only)
      *
      *   'S': DisabledRole                  (The number of times device entered OT_DEVICE_ROLE_DISABLED role).

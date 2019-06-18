@@ -202,6 +202,8 @@ template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_CNTR_ALL_SPINEL_COUNT
     SuccessOrExit(error = mEncoder.WriteUint32(mUpdatePropsCnt - mUpdatePropsSucc));
     SuccessOrExit(error = mEncoder.WriteUint32(mSendDatagramCnt));
     SuccessOrExit(error = mEncoder.WriteUint32(mSendDatagramFail));
+    SuccessOrExit(error = mEncoder.WriteUint32(mSendLogByteCnt));
+    SuccessOrExit(error = mEncoder.WriteUint32(mDroppedLogByteCnt));
     SuccessOrExit(error = mEncoder.CloseStruct());
 
 exit:
