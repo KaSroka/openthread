@@ -1210,6 +1210,10 @@ const char *spinel_command_to_cstr(unsigned int command)
         ret = "PROP_VALUES_ARE";
         break;
 
+    case SPINEL_CMD_CLEAR_ALL_SPINEL_COUNTERS:
+        ret = "CLEAR_ALL_SPINEL_COUNTERS";
+        break;
+
     default:
         break;
     }

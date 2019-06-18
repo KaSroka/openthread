@@ -356,6 +356,7 @@ protected:
     otError CommandHandler_NET_SAVE(uint8_t aHeader);
     otError CommandHandler_NET_CLEAR(uint8_t aHeader);
     otError CommandHandler_NET_RECALL(uint8_t aHeader);
+    otError CommandHandler_CLEAR_ALL_SPINEL_COUNTERS(uint8_t aHeader);
 #endif
 
     // ----------------------------------------------------------------------------

@@ -281,6 +281,22 @@ otError NcpBase::CommandHandler_NET_RECALL(uint8_t aHeader)
     return PrepareLastStatusResponse(aHeader, SPINEL_STATUS_UNIMPLEMENTED);
 }
 
+otError NcpBase::CommandHandler_CLEAR_ALL_SPINEL_COUNTERS(uint8_t aHeader)
+{
+    mLogReqCnt         = 0;
+    mLogReqFail        = 0;
+    mEnqRespCnt        = 0;
+    mEnqRespFail       = 0;
+    mUpdatePropsCnt    = 0;
+    mUpdatePropsSucc   = 0;
+    mSendDatagramCnt   = 0;
+    mSendDatagramFail  = 0;
+    mSendLogByteCnt    = 0;
+    mDroppedLogByteCnt = 0;
+
+    return PrepareLastStatusResponse(aHeader, SPINEL_STATUS_OK);
+}
+
 template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_NET_SAVED>(void)
 {
     return mEncoder.WriteBool(otDatasetIsCommissioned(mInstance));

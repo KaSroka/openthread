@@ -888,6 +888,10 @@ otError NcpBase::HandleCommand(uint8_t aHeader)
     case SPINEL_CMD_NET_RECALL:
         error = CommandHandler_NET_RECALL(aHeader);
         break;
+
+    case SPINEL_CMD_CLEAR_ALL_SPINEL_COUNTERS:
+        error = CommandHandler_CLEAR_ALL_SPINEL_COUNTERS(aHeader);
+        break;
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
 
     default:
