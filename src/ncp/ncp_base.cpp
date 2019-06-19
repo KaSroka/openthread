@@ -34,6 +34,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <openthread/diag.h>
 #include <openthread/icmp6.h>
@@ -601,10 +602,13 @@ unsigned int NcpBase::ConvertLogRegion(otLogRegion aLogRegion)
 
 void NcpBase::Log(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aLogString)
 {
-    otError error  = OT_ERROR_NONE;
-    uint8_t header = SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0;
+    otError  error  = OT_ERROR_NONE;
+    uint8_t  header = SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0;
+    uint32_t spinelLogSize = 5; // Initialized with converted aLogLevel and aLogRegion size which are sent together with the aLogString.
 
     mLogReqCnt++;
+    spinelLogSize   += strlen(aLogString);
+    mSendLogByteCnt += spinelLogSize;
 
     VerifyOrExit(!mDisableStreamWrite);
     VerifyOrExit(!mChangedPropsSet.IsPropertyFiltered(SPINEL_PROP_STREAM_LOG));
@@ -626,6 +630,8 @@ exit:
     if (error == OT_ERROR_NO_BUFS)
     {
         mLogReqFail++;
+        mDroppedLogByteCnt += spinelLogSize;
+
         mChangedPropsSet.AddLastStatus(SPINEL_STATUS_NOMEM);
         mUpdateChangedPropsTask.Post();
     }
