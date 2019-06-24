@@ -2063,8 +2063,13 @@ void Interpreter::HandlePingTimer()
     otError  error     = OT_ERROR_NONE;
     uint32_t timestamp = HostSwap32(TimerMilli::GetNow());
 
-    otMessage *          message;
+    otMessage *          message = NULL;
     const otMessageInfo *messageInfo = static_cast<const otMessageInfo *>(&mMessageInfo);
+    otBufferInfo         bufferInfo;
+
+    otMessageGetBufferInfo(mInstance, &bufferInfo);
+
+    VerifyOrExit(bufferInfo.mFreeBuffers >= 10, error = OT_ERROR_NO_BUFS);
 
     VerifyOrExit((message = otIp6NewMessage(mInstance, NULL)) != NULL, error = OT_ERROR_NO_BUFS);
     SuccessOrExit(error = otMessageAppend(message, &timestamp, sizeof(timestamp)));
