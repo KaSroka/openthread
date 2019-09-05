@@ -37,6 +37,7 @@ endif
 
 if OPENTHREAD_EXAMPLES_NRF52840
 lib_LIBRARIES                                                                                                           = \
+    libnordicsemi-nrf52840-system.a                                                                                       \
     libnordicsemi-nrf52840-sdk.a                                                                                          \
     libnordicsemi-nrf52840-radio-driver.a                                                                                 \
     libnordicsemi-nrf52840-radio-driver-softdevice.a                                                                      \
@@ -205,6 +206,14 @@ libnordicsemi_nrf52840_sdk_a_CPPFLAGS                                           
 libnordicsemi_nrf52840_sdk_a_SOURCES                                                                                    = \
     $(NORDICSEMI_COMMON_SOURCES)                                                                                          \
     $(NORDICSEMI_USB_SOURCES)                                                                                             \
+    $(NULL)
+
+libnordicsemi_nrf52840_system_a_CPPFLAGS                                                                                = \
+    $(COMMONCPPFLAGS)                                                                                                     \
+    $(NRF52840_CPPFLAGS)                                                                                                  \
+    $(NULL)
+
+libnordicsemi_nrf52840_system_a_SOURCES                                                                                 = \
     $(NORDICSEMI_NRF52840_SOURCES)                                                                                        \
     $(NULL)
 

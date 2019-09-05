@@ -28,15 +28,15 @@
 
 .NOTPARALLEL:
 
-AR                              = arm-none-eabi-ar
+AR                              = arm-none-eabi-gcc-ar
 CCAS                            = $(CCPREFIX) arm-none-eabi-gcc
 CPP                             = arm-none-eabi-cpp
 CC                              = $(CCPREFIX) arm-none-eabi-gcc
 CXX                             = $(CCPREFIX) arm-none-eabi-g++
 LD                              = arm-none-eabi-ld
 STRIP                           = arm-none-eabi-strip
-NM                              = arm-none-eabi-nm
-RANLIB                          = arm-none-eabi-ranlib
+NM                              = arm-none-eabi-gcc-nm
+RANLIB                          = arm-none-eabi-gcc-ranlib
 OBJCOPY                         = arm-none-eabi-objcopy
 
 GCCVersion                      = $(shell expr `$(CC) -dumpversion | cut -f1 -d.`)
@@ -83,6 +83,12 @@ COMMONCFLAGS                      := \
     $(NULL)
 
 include $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/common-switches.mk
+
+ifeq ($(LTO),1)
+COMMONCFLAGS                   += -flto                            \
+                                  -fno-fat-lto-objects             \
+                                  $(NULL)
+endif
 
 ifeq ($(BOOTLOADER),1)
 configure_OPTIONS += --with-custom-linker-file=$(AbsTopSourceDir)/examples/platforms/nrf52840/nrf52840_bootloader.ld

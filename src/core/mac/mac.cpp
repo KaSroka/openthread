@@ -893,8 +893,8 @@ bool Mac::IsJoinable(void) const
 
 void Mac::ProcessTransmitAesCcm(TxFrame &aFrame, const ExtAddress *aExtAddress)
 {
-    uint32_t       frameCounter = 0;
-    uint8_t        securityLevel;
+    uint32_t       frameCounter  = 0;
+    uint8_t        securityLevel = Frame::kSecNone;
     uint8_t        nonce[KeyManager::kNonceSize];
     uint8_t        tagLength;
     Crypto::AesCcm aesCcm;
@@ -919,7 +919,7 @@ void Mac::ProcessTransmitAesCcm(TxFrame &aFrame, const ExtAddress *aExtAddress)
 void Mac::ProcessTransmitSecurity(TxFrame &aFrame, bool aProcessAesCcm)
 {
     KeyManager &      keyManager = Get<KeyManager>();
-    uint8_t           keyIdMode;
+    uint8_t           keyIdMode  = Frame::kKeyIdMode0;
     const ExtAddress *extAddress = NULL;
 
     VerifyOrExit(aFrame.GetSecurityEnabled());
@@ -1357,10 +1357,10 @@ void Mac::HandleTimer(void)
 
 otError Mac::ProcessReceiveSecurity(RxFrame &aFrame, const Address &aSrcAddr, Neighbor *aNeighbor)
 {
-    KeyManager &      keyManager = Get<KeyManager>();
-    otError           error      = OT_ERROR_NONE;
-    uint8_t           securityLevel;
-    uint8_t           keyIdMode;
+    KeyManager &      keyManager    = Get<KeyManager>();
+    otError           error         = OT_ERROR_NONE;
+    uint8_t           securityLevel = Frame::kSecNone;
+    uint8_t           keyIdMode     = Frame::kKeyIdMode0;
     uint32_t          frameCounter;
     uint8_t           nonce[KeyManager::kNonceSize];
     uint8_t           tag[Frame::kMaxMicSize];
@@ -1792,7 +1792,7 @@ exit:
 bool Mac::HandleMacCommand(RxFrame &aFrame)
 {
     bool    didHandle = false;
-    uint8_t commandId;
+    uint8_t commandId = 0;
 
     aFrame.GetCommandId(commandId);
 
