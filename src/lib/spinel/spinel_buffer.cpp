@@ -84,6 +84,8 @@ void Buffer::Clear(void)
     mReadSegmentTail               = mBuffer;
     mReadPointer                   = mBuffer;
 
+    UpdateHighWatermark();
+
 #if OPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE
     mReadMessage       = nullptr;
     mReadMessageOffset = 0;
@@ -110,6 +112,28 @@ void Buffer::Clear(void)
     }
 #endif
 }
+
+uint16_t Buffer::GetUsedSpace() const
+{
+    return GetDistance(mReadFrameStart[kForward], mWriteFrameStart[kForward], kForward) +
+           GetDistance(mReadFrameStart[kBackward], mWriteFrameStart[kBackward], kBackward);
+}
+
+void Buffer::UpdateHighWatermark(void)
+{
+    uint16_t usedSpace = GetUsedSpace();
+
+    if (usedSpace > mHighWatermark)
+    {
+        mHighWatermark = usedSpace;
+    }
+}
+
+uint16_t Buffer::GetHighWatermark(void) const
+{
+    return mHighWatermark;
+}
+
 
 void Buffer::SetFrameAddedCallback(BufferCallback aFrameAddedCallback, void *aFrameAddedContext)
 {
@@ -516,6 +540,9 @@ otError Buffer::InFrameEnd(void)
     // Update the frame start pointer to current segment head to be ready for next frame.
     mWriteFrameStart[mWriteDirection] = mWriteSegmentHead;
 
+    // Update high watermark.
+    UpdateHighWatermark();
+
 #if OPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE
     // Move all the messages from the frame queue to the main queue.
     while ((message = otMessageQueueGetHead(&mWriteFrameMessageQueue)) != nullptr)
@@ -848,6 +875,8 @@ otError Buffer::OutFrameRemove(void)
 
     mReadFrameStart[mReadDirection] = bufPtr;
 
+    UpdateHighWatermark();
+
     UpdateReadWriteStartPointers();
 
     mReadState       = kReadStateNotActive;
@@ -870,6 +899,7 @@ void Buffer::UpdateReadWriteStartPointers(void)
         // Move the high priority pointers to be right behind the low priority start.
         mWriteFrameStart[kPriorityHigh] = GetUpdatedBufPtr(mReadFrameStart[kPriorityLow], 1, kBackward);
         mReadFrameStart[kPriorityHigh]  = mWriteFrameStart[kPriorityHigh];
+        UpdateHighWatermark();
         ExitNow();
     }
 
@@ -879,6 +909,7 @@ void Buffer::UpdateReadWriteStartPointers(void)
         // Move the low priority pointers to be 1 byte after the high priority start.
         mWriteFrameStart[kPriorityLow] = GetUpdatedBufPtr(mReadFrameStart[kPriorityHigh], 1, kForward);
         mReadFrameStart[kPriorityLow]  = mWriteFrameStart[kPriorityLow];
+        UpdateHighWatermark();
     }
 
 exit:

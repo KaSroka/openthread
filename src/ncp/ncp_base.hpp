@@ -54,6 +54,7 @@
 #include "changed_props_set.hpp"
 #include "common/instance.hpp"
 #include "common/tasklet.hpp"
+#include "common/timer.hpp"
 #include "lib/spinel/spinel.h"
 #include "lib/spinel/spinel_buffer.hpp"
 #include "lib/spinel/spinel_decoder.hpp"
@@ -517,6 +518,9 @@ protected:
 
 #endif // OPENTHREAD_ENABLE_NCP_VENDOR_HOOK
 
+    static void HandleHighWatermarkTimer(Timer &aTimer);
+    void        HandleHighWatermarkTimer(void);
+
 protected:
     static NcpBase *       sNcpInstance;
     static spinel_status_t ThreadErrorToSpinelStatus(otError aError);
@@ -614,6 +618,8 @@ protected:
 #endif
 
     uint64_t mLogTimestampBase; // Timestamp base used for logging
+
+    TimerMilli mHighWatermarkNotifyTimer; // Timer for periodic notification of high watermark.
 };
 
 } // namespace Ncp

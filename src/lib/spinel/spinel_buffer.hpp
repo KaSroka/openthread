@@ -132,6 +132,24 @@ public:
     void Clear(void);
 
     /**
+     * Returns number of bytes occupied.
+     *
+     */
+    uint16_t GetUsedSpace(void) const;
+
+    /**
+     * Update high watermark marker.
+     *
+     */
+    void UpdateHighWatermark(void);
+
+    /**
+     * Return numbers of maximum bytes occupied.
+     *
+     */
+    uint16_t GetHighWatermark(void) const;
+
+    /**
      * This method sets the FrameAdded callback and its context.
      *
      * Subsequent calls to this method will overwrite the previous callback and its context.
@@ -643,6 +661,8 @@ private:
     uint8_t *mReadSegmentHead;           // Pointer to start of current segment in the frame being read.
     uint8_t *mReadSegmentTail;           // Pointer to end of current segment in the frame being read.
     uint8_t *mReadPointer;               // Pointer to next byte to read (either in segment or in msg buffer).
+
+    uint16_t mHighWatermark; // Maximum usage of this buffer.
 
 #if OPENTHREAD_SPINEL_CONFIG_OPENTHREAD_MESSAGE_ENABLE
     otMessageQueue mWriteFrameMessageQueue;                // Message queue for the current frame being written.

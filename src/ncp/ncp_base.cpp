@@ -51,6 +51,8 @@
 #include "common/debug.hpp"
 #include "radio/radio.hpp"
 
+#include "common/logging.hpp"
+
 namespace ot {
 namespace Ncp {
 
@@ -253,6 +255,7 @@ NcpBase::NcpBase(Instance *aInstance)
     , mTrelTestModeEnable(true)
 #endif
     , mLogTimestampBase(0)
+    , mHighWatermarkNotifyTimer(*aInstance, NcpBase::HandleHighWatermarkTimer, this)
 {
     OT_ASSERT(mInstance != nullptr);
 
@@ -294,6 +297,8 @@ NcpBase::NcpBase(Instance *aInstance)
 #if OPENTHREAD_ENABLE_VENDOR_EXTENSION
     aInstance->Get<Extension::ExtensionBase>().SignalNcpInit(*this);
 #endif
+
+    mHighWatermarkNotifyTimer.Start(1000);
 }
 
 NcpBase *NcpBase::GetNcpInstance(void)
@@ -681,6 +686,19 @@ void NcpBase::RegisterPeekPokeDelagates(otNcpDelegateAllowPeekPoke aAllowPeekDel
 }
 
 #endif // OPENTHREAD_CONFIG_NCP_ENABLE_PEEK_POKE
+
+void NcpBase::HandleHighWatermarkTimer(Timer &aTimer)
+{
+    OT_UNUSED_VARIABLE(aTimer);
+
+    GetNcpInstance()->HandleHighWatermarkTimer();
+}
+
+void NcpBase::HandleHighWatermarkTimer(void)
+{
+    otLogNote(OT_LOG_REGION_NCP, "[NCP HIGH WATERMARK]", "NCP buffer high watermark: %u", mTxFrameBuffer.GetHighWatermark());
+    mHighWatermarkNotifyTimer.Start(1000);
+}
 
 // ----------------------------------------------------------------------------
 // MARK: Spinel Response Handling
